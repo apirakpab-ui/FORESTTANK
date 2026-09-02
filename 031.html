@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForestTank - Aquascape & Aquatic Services</title>
+    <style>
+        :root {
+            --bg-color: #F9F8F6;
+            --card-bg: #FFFFFF;
+            --primary: #1C3B2B; /* Dark Pine Green */
+            --accent: #C5A059;  /* Champagne Gold */
+            --text-main: #2C2C2C;
+            --text-sub: #767676;
+            --border: #E8E6E1;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px; /* Mobile First Screen Ratio */
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
+            padding-bottom: 80px;
+        }
+
+        /* View Control */
+        .page { display: none; padding: 24px; }
+        .page.active { display: block; }
+
+        /* Typography */
+        h1, h2, h3 { font-weight: 300; letter-spacing: 0.5px; margin: 0 0 12px 0; }
+        .brand-title { font-size: 28px; color: var(--primary); text-transform: uppercase; letter-spacing: 3px; text-align: center; }
+        .section-title { font-size: 18px; color: var(--primary); margin-top: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* UI Components */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-accent { background-color: var(--accent); }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        .card-body { padding: 16px; }
+        .price { color: var(--accent); font-weight: 600; font-size: 16px; margin-top: 8px; }
+
+        /* Form Inputs */
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+            background: #FFF;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 430px;
+            height: 60px;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .nav-item { font-size: 11px; color: var(--text-sub); text-align: center; cursor: pointer; text-decoration: none; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- 1. LOGIN PAGE -->
+    <div id="login-page" class="page active">
+        <div style="margin-top: 80px; text-align: center;">
+            <h1 class="brand-title">ForestTank</h1>
+            <p style="color: var(--text-sub); font-size: 13px; margin-bottom: 40px;">MINIMAL AQUATIC LIVING</p>
+        </div>
+        <form onsubmit="return false;">
+            <input type="email" placeholder="อีเมลของคุณ" />
+            <input type="password" placeholder="รหัสผ่าน" />
+            <button class="btn" onclick="showPage('home-page')">เข้าสู่ระบบ</button>
+        </form>
+        <p style="text-align: center; font-size: 12px; color: var(--text-sub); margin-top: 24px;">
+            ยังไม่มีบัญชี? <span style="color: var(--accent); cursor: pointer;">สมัครสมาชิก</span>
+        </p>
+    </div>
+
+    <!-- 2. HOME PAGE -->
+    <div id="home-page" class="page">
+        <h1 class="brand-title" style="text-align: left; font-size: 20px;">FORESTTANK</h1>
+        <p style="color: var(--text-sub); font-size: 12px; margin-bottom: 24px;">ยกระดับพื้นที่ของคุณด้วยธรรมชาติ</p>
+        
+        <!-- Service Categories Nav -->
+        <div class="card" style="padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: transparent; border: none;">
+            <button class="btn" style="font-size: 11px; padding: 10px;" onclick="showPage('shop-page')">ซื้ออุปกรณ์</button>
+            <button class="btn btn-accent" style="font-size: 11px; padding: 10px;" onclick="showPage('design-page')">จัดตู้ใหม่</button>
+            <button class="btn btn-accent" style="font-size: 11px; padding: 10px;" onclick="showPage('service-page')">ดูแล/ทำความสะอาด</button>
+            <button class="btn" style="font-size: 11px; padding: 10px;" onclick="showPage('consult-page')">ปรึกษาผู้เชี่ยวชาญ</button>
+        </div>
+
+        <h2 class="section-title">บริการแนะนำ</h2>
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80" alt="Aquascape Design">
+            <div class="card-body">
+                <h3>ออกแบบและจัดตกแต่งตู้ไม้น้ำ</h3>
+                <p style="font-size: 12px; color: var(--text-sub);">บริการออกแบบสไตล์ Minimal ให้เข้ากับพื้นที่คอนโด พร้อมเลือกพันธุ์ไม้ดูแลง่าย</p>
+                <div class="price">เริ่มต้น ฿4,500</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE: 1. ซื้อขายตู้/อุปกรณ์ -->
+    <div id="shop-page" class="page">
+        <h2 class="section-title">ร้านค้าอุปกรณ์</h2>
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1520301255226-bf5f144451c1?auto=format&fit=crop&w=600&q=80" alt="Ultra Clear Tank">
+            <div class="card-body">
+                <h3>ตู้กระจก Ultra Clear 45cm</h3>
+                <p style="font-size: 12px; color: var(--text-sub);">เนื้อกระจกใสพิเศษ ตัดขอบไร้รอยต่อ ไซส์พอดีห้องคอนโด</p>
+                <div class="price">฿1,890</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE: 2. บริการจัดตกแต่งตู้ใหม่ -->
+    <div id="design-page" class="page">
+        <h2 class="section-title">บริการจัดตกแต่งตู้</h2>
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80" alt="Design Service">
+            <div class="card-body">
+                <h3>Full-Service Aquascaping</h3>
+                <p style="font-size: 12px; color: var(--text-sub);">จัดตู้ตามสไตล์ที่ชอบ เลือกไม้โตช้า ลดภาระการตัดแต่ง ราคาโปร่งใสไม่มีบวกเพิ่ม</p>
+                <div class="price">฿5,900 - ฿15,000</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE: 3. บริการดูแล/ตัดแต่ง/ทำความสะอาด -->
+    <div id="service-page" class="page">
+        <h2 class="section-title">บริการดูแลตู้ไม้น้ำ</h2>
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=600&q=80" alt="Maintenance">
+            <div class="card-body">
+                <h3>แพ็กเกจดูแลรายเดือน (2 ครั้ง/เดือน)</h3>
+                <p style="font-size: 12px; color: var(--text-sub);">ตัดแต่งไม้น้ำ, เปลี่ยนน้ำ, ขัดตะไคร่, ตรวจค่าน้ำ หมดปัญหาตู้เสียไม่มีเวลาดูแล</p>
+                <div class="price">฿1,200 / เดือน</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE: 4. ปรึกษาปัญหาการเลี้ยง -->
+    <div id="consult-page" class="page">
+        <h2 class="section-title">แก้ปัญหา & ปรึกษาผู้เชี่ยวชาญ</h2>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 16px;">ตรงจุด ไม่โดนหลอก ไม่ต้องสุ่มซื้อปุ๋ย/ยาผิดชนิด</p>
+        <div class="card">
+            <div class="card-body">
+                <h3>Consult & Water Test Service</h3>
+                <p style="font-size: 12px; color: var(--text-sub);">วิเคราะห์ต้นไม้ตาย น้ำเสีย หรือปลาป่วย โดยผู้เชี่ยวชาญ ผ่าน Video Call หรือ Visit</p>
+                <div class="price">฿350 / ครั้ง</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE: 5. ตลาดมือ 2 -->
+    <div id="market-page" class="page">
+        <h2 class="section-title">ตลาดมือสอง (Pre-Owned)</h2>
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=600&q=80" alt="Second Hand Filter">
+            <div class="card-body">
+                <h3>กรองนอก Eheim 2213 (สภาพ 90%)</h3>
+                <p style="font-size: 12px; color: var(--text-sub);">ใช้งาน 3 เดือน อุปกรณ์ครบกล่อง ตรวจสอบคุณภาพโดยทีมงานแล้ว</p>
+                <div class="price">฿1,450</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Navigation -->
+    <div class="nav-bar">
+        <div class="nav-item" onclick="showPage('home-page')">หน้าแรก</div>
+        <div class="nav-item" onclick="showPage('shop-page')">อุปกรณ์</div>
+        <div class="nav-item" onclick="showPage('service-page')">บริการ</div>
+        <div class="nav-item" onclick="showPage('consult-page')">ปรึกษา</div>
+        <div class="nav-item" onclick="showPage('market-page')">มือสอง</div>
+    </div>
+
+</div>
+
+<script>
+    function showPage(pageId) {
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(page => page.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
