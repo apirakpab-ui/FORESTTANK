@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForestTank - แอปพลิเคชันตู้ไม้น้ำและสัตว์น้ำจืด</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2E5A44;
+            --accent-green: #4A7C59;
+            --light-cream: #F9F6F0;
+            --dark-cream: #EFECE6;
+            --pure-white: #FFFFFF;
+            --alert-red: #D9534F;
+            --text-dark: #2C3E50;
+            --text-muted: #7F8C8D;
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.05);
+            --shadow-medium: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #1a261f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container Mockup Mobile App */
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            height: 100vh;
+            max-height: 896px;
+            background-color: var(--light-cream);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-medium);
+        }
+
+        @media (min-width: 420px) {
+            .app-container {
+                height: 844px;
+                border-radius: 35px;
+                border: 8px solid #333;
+            }
+        }
+
+        /* Screen Wrapper */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: var(--light-cream);
+            z-index: 1;
+        }
+
+        .screen.active {
+            display: flex;
+            z-index: 2;
+        }
+
+        /* ---------------- LOGIN SCREEN ---------------- */
+        #login-screen {
+            background: linear-gradient(180deg, var(--primary-green) 0%, #1c382a 100%);
+            color: var(--pure-white);
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 3.5rem;
+            color: #A3E4D7;
+            margin-bottom: 10px;
+        }
+
+        .login-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--pure-white);
+        }
+
+        .login-subtitle {
+            color: var(--dark-cream);
+            font-weight: 300;
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--dark-cream);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--pure-white);
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background-color: var(--pure-white);
+            color: var(--primary-green);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background-color: var(--dark-cream);
+        }
+
+        /* ---------------- HOME SCREEN ---------------- */
+        .app-header {
+            background-color: var(--primary-green);
+            color: var(--pure-white);
+            padding: 20px 20px 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: var(--shadow-light);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--pure-white);
+            color: var(--primary-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .main-content {
+            padding: 20px;
+            padding-bottom: 90px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: var(--accent-green);
+        }
+
+        .banner {
+            width: 100%;
+            height: 150px;
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: var(--shadow-light);
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-text {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.75));
+            color: var(--pure-white);
+        }
+
+        /* Category Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .category-card {
+            background: var(--pure-white);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-light);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .category-card:active {
+            transform: scale(0.97);
+        }
+
+        .category-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: var(--light-cream);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+
+        .category-card:nth-child(5) .category-icon {
+            color: var(--alert-red);
+            background-color: #FDF2F2;
+        }
+
+        .category-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        /* ---------------- DETAIL LIST SCREENS ---------------- */
+        .sub-header {
+            background-color: var(--pure-white);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: var(--shadow-light);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .sub-header-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 20px;
+            padding-bottom: 90px;
+        }
+
+        .product-card {
+            background: var(--pure-white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            flex-direction: row;
+            height: 125px;
+        }
+
+        .product-img {
+            width: 125px;
+            height: 100%;
+            object-fit: cover;
+            background-color: var(--dark-cream);
+            flex-shrink: 0;
+        }
+
+        .product-info {
+            padding: 12px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .product-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.2;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        .btn-action {
+            background-color: var(--primary-green);
+            color: var(--pure-white);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .btn-action.red {
+            background-color: var(--alert-red);
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background-color: var(--pure-white);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+            z-index: 20;
+            border-top: 1px solid var(--dark-cream);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- ================= 1. หน้าล็อกอิน (LOGIN SCREEN) ================= -->
+        <div class="screen active" id="login-screen">
+            <div style="margin-bottom: 20px;">
+                <i class="fa-solid fa-water login-logo"></i>
+                <h1 class="login-title">ForestTank</h1>
+                <p class="login-subtitle">อาณาจักรตู้ไม้น้ำและสัตว์น้ำจืดครบวงจร</p>
+            </div>
+
+            <form onsubmit="event.preventDefault(); navigateTo('home-screen');">
+                <div class="form-group">
+                    <label><i class="fa-regular fa-envelope"></i> อีเมล / เบอร์โทรศัพท์</label>
+                    <input type="text" placeholder="กรอกอีเมลของคุณ" value="user@foresttank.com" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-lock"></i> รหัสผ่าน</label>
+                    <input type="password" placeholder="กรอกรหัสผ่าน" value="123456" required>
+                </div>
+                <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
+            </form>
+        </div>
+
+        <!-- ================= 2. หน้าโฮม (HOME SCREEN) ================= -->
+        <div class="screen" id="home-screen">
+            <div class="app-header">
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--dark-cream);">ยินดีต้อนรับคุณปั๊บ</div>
+                    <div class="header-title">ForestTank</div>
+                </div>
+                <div class="user-avatar">P</div>
+            </div>
+
+            <div class="main-content">
+                <!-- Banner -->
+                <div class="banner">
+                    <img src="https://images.unsplash.com/photo-1520301255226-bf5f144451c1?auto=format&fit=crop&w=800&q=80" alt="Aquascape Banner">
+                    <div class="banner-text">
+                        <h3 style="font-size: 1.1rem;">เนรมิตธรรมชาติในบ้านคุณ</h3>
+                        <p style="font-size: 0.75rem; color: var(--dark-cream);">บริการจัดและดูแลตู้ไม้น้ำจืดมืออาชีพ</p>
+                    </div>
+                </div>
+
+                <!-- Category Menu -->
+                <div class="section-title">
+                    <i class="fa-solid fa-layer-group"></i> หมวดหมู่บริการ
+                </div>
+
+                <div class="category-grid">
+                    <!-- 1. ซื้อขายตู้ -->
+                    <div class="category-card" onclick="navigateTo('tanks-screen')">
+                        <div class="category-icon">
+                            <i class="fa-solid fa-box-archive"></i>
+                        </div>
+                        <div class="category-name">การซื้อขายตู้</div>
+                    </div>
+
+                    <!-- 2. เครื่องมือต่างๆ -->
+                    <div class="category-card" onclick="navigateTo('equipment-screen')">
+                        <div class="category-icon">
+                            <i class="fa-solid fa-gears"></i>
+                        </div>
+                        <div class="category-name">เครื่องมือ & อุปกรณ์</div>
+                    </div>
+
+                    <!-- 3. ต้นไม้น้ำ -->
+                    <div class="category-card" onclick="navigateTo('plants-screen')">
+                        <div class="category-icon">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                        <div class="category-name">ต้นไม้น้ำจืด</div>
+                    </div>
+
+                    <!-- 4. สัตว์น้ำ -->
+                    <div class="category-card" onclick="navigateTo('animals-screen')">
+                        <div class="category-icon">
+                            <i class="fa-solid fa-fish-fins"></i>
+                        </div>
+                        <div class="category-name">สัตว์น้ำจืด</div>
+                    </div>
+
+                    <!-- 5. เรียกใช้บริการ -->
+                    <div class="category-card" style="grid-column: span 2;" onclick="navigateTo('services-screen')">
+                        <div class="category-icon">
+                            <i class="fa-solid fa-hand-holding-hand"></i>
+                        </div>
+                        <div class="category-name">เรียกใช้บริการดูแล & จัดตกแต่ง</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item active" onclick="navigateTo('home-screen')">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าแรก</span>
+                </div>
+                <div class="nav-item" onclick="alert('ฟังก์ชันนี้กำลังพัฒนาครับ')">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>รายการโปรด</span>
+                </div>
+                <div class="nav-item" onclick="alert('ฟังก์ชันนี้กำลังพัฒนาครับ')">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>คำสั่งซื้อ</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('login-screen')">
+                    <i class="fa-solid fa-user"></i>
+                    <span>โปรไฟล์</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 3. หมวดการซื้อขายตู้ ================= -->
+        <div class="screen" id="tanks-screen">
+            <div class="sub-header">
+                <button class="btn-back" onclick="navigateTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="sub-header-title">การซื้อขายตู้</div>
+            </div>
+
+            <div class="product-grid">
+                <!-- ขายตู้เปล่า -->
+                <div class="product-card">
+                    <img class="product-img" src="https://fu.lnwfile.com/_/fu/_raw/7y/j2/22.jpg" alt="ตู้กระจก LID ใสพิเศษ 60x30x36ซม">
+                    <div class="product-info">
+                        <div class="product-title">ขายตู้เปล่า (กระจกใสพิเศษ)</div>
+                        <div class="product-desc">ตู้ไม้น้ำไม่มีขอบไม่มีคาน เจียรคอมอย่างดี งานเนี๊ยบกระจกใสพิเศษ 60x30x36ซม หนา 6 มิล</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 3,000</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- ขายตู้ที่จัดไม้น้ำแล้ว -->
+                <div class="product-card">
+                    <img class="product-img" src="https://f.ptcdn.info/285/083/000/s95k47sam0q0Q84sjXJs-o.jpg" alt="ขายตู้ที่จัดไม้น้ำแล้ว">
+                    <div class="product-info">
+                        <div class="product-title">ขายตู้ที่จัดไม้น้ำแล้ว</div>
+                        <div class="product-desc">จัดสไตล์ธรรมชาติ (Nature Style) ขนาด 14 นิ้ว ตกแต่งด้วยมอส เฟิร์น อนูเบียส และจอก สวยงามลงตัว</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 4,500</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- ขายตู้ที่จัดไม้น้ำแล้วพร้อมปลา -->
+                <div class="product-card">
+                    <img class="product-img" src="https://www.khaosod.co.th/technologychaoban/wp-content/uploads/2019/01/3-24-696x464.jpg" alt="ขายตู้ที่จัดไม้น้ำแล้วพร้อมปลา">
+                    <div class="product-info">
+                        <div class="product-title">ขายตู้ที่จัดไม้น้ำแล้วพร้อมปลา</div>
+                        <div class="product-desc">ตู้พร้อมระบบไม้น้ำและฝูงปลานีออนสมบูรณ์ พร้อมยกตั้งใช้งานได้ทันที มีระบบกรองครบชุด</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 5,900</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 4. หมวดเครื่องมือต่างๆ ================= -->
+        <div class="screen" id="equipment-screen">
+            <div class="sub-header">
+                <button class="btn-back" onclick="navigateTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="sub-header-title">เครื่องมือ & อุปกรณ์</div>
+            </div>
+
+            <div class="product-grid">
+                <!-- กรองแขวน -->
+                <div class="product-card">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80" alt="กรองแขวน">
+                    <div class="product-info">
+                        <div class="product-title">กรองแขวน (Hang-on Filter)</div>
+                        <div class="product-desc">กรองแขวนข้างตู้ กรองน้ำได้สะอาดยอดเยี่ยม ทำงานเงียบ ประหยัดพื้นที่ในตู้</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 350</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- กรองนอก -->
+                <div class="product-card">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80" alt="กรองนอก">
+                    <div class="product-info">
+                        <div class="product-title">กรองนอก (Canister Filter)</div>
+                        <div class="product-desc">ระบบกรองถังนอกประสิทธิภาพสูง มีพื้นที่ใส่มีเดียเยอะ ช่วยให้น้ำใสสะอาดยาวนาน</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 1,890</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- เครื่องให้ออกซิเจน -->
+                <div class="product-card">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=400&q=80" alt="เครื่องให้ออกซิเจน">
+                    <div class="product-info">
+                        <div class="product-title">เครื่องให้ออกซิเจน</div>
+                        <div class="product-desc">ปั๊มลมเพิ่มออกซิเจน แรงลมดี ปรับระดับแรงลมได้ เงียบไร้เสียงรบกวน</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 180</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ถังคาร์บอน -->
+                <div class="product-card">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1520301255226-bf5f144451c1?auto=format&fit=crop&w=400&q=80" alt="ถังคาร์บอน">
+                    <div class="product-info">
+                        <div class="product-title">ถังคาร์บอน (CO2 Tank)</div>
+                        <div class="product-desc">ถังคาร์บอนไดออกไซด์สำหรับไม้น้ำ ขนาด 3 ลิตร พร้อมหัวเรกกูเรเตอร์เปิด-ปิดแม่นยำ</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 2,450</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ไฟเลี้ยงไม้น้ำ -->
+                <div class="product-card">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=400&q=80" alt="ไฟเลี้ยงไม้น้ำ">
+                    <div class="product-info">
+                        <div class="product-title">ไฟเลี้ยงไม้น้ำ LED Full Spectrum</div>
+                        <div class="product-desc">โคมไฟเร่งสีและเร่งการเจริญเติบโตของไม้น้ำ ค่าแสงสว่างตรงตามความต้องการของพืช</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 890</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- สายออกซิเจน -->
+                <div class="product-card">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80" alt="สายออกซิเจน">
+                    <div class="product-info">
+                        <div class="product-title">สายออกซิเจนยางซิลิโคน</div>
+                        <div class="product-desc">สายยางซิลิโคนอย่างดี นิ่ม ยืดหยุ่นสูง ไม่หักงอง่าย ความยาว 5 เมตร ปลอดภัยต่อสัตว์น้ำ</div>
+                        <div class="product-bottom">
+                            <div class="product-price">฿ 45</div>
+                            <button class="btn-action">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 5. หมวดต้นไม้น้ำ ================= -->
+        <div class="screen" id="plants-screen">
+            <div class="sub-header">
+                <button class="btn-back" onclick="navigateTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="sub-header-title">ต้นไม้น้ำจืด</div>
+            </div>
+
+            <div class="product-grid">
+                <script>
+                    const plantsData = [
+                        { name: 'สาหร่ายหางกระรอก', price: '฿ 30', desc: 'เลี้ยงง่าย เติบโตไว ช่วยดูดซับของเสียและเพิ่มออกซิเจนในน้ำได้ดี', img: 'https://down-th.img.susercontent.com/file/th-11134207-7r98r-lv4d7oozackd6f' },
+                        { name: 'อนูเบียส', price: '฿ 120', desc: 'ไม้พันขอนยอดนิยม ใบหนาทนทาน แสงน้อยก็เจริญเติบโตได้ดี', img: 'https://down-th.img.susercontent.com/file/th-11134207-81ztk-mi94nhpvj94z3d' },
+                        { name: 'โรทาลาเวียดนาม', price: '฿ 90', desc: 'ไม้ข้อใบละเอียด ให้สีเขียวสดใสทรงพุ่มสวยงาม', img: 'https://down-th.img.susercontent.com/file/th-11134207-7r98s-lmujgcxfyob249' },
+                        { name: 'โรทาลามาแครนดราด่าง', price: '฿ 180', desc: 'ไม้ข้อสีชมพูแดง ลายด่างสวยงาม หายาก เพิ่มจุดเด่นสายตา', img: 'https://down-th.img.susercontent.com/file/af4304ee4c372d532d1f7e53fc759812' },
+                        { name: 'อะเมซอนฮาดิเรดเพิร์ลใบด่าง', price: '฿ 320', desc: 'ไม้อะเมซอนสายพันธุ์ด่างแรร์ไอเทม ใบสวยทรงพลังเหมาะกับตู้ขนาดใหญ่', img: 'https://down-th.img.susercontent.com/file/th-11134207-7r98z-lp1smttr5ta6b2' },
+                    ];
+
+                    document.write(plantsData.map(p => `
+                        <div class="product-card">
+                            <img class="product-img" src="${p.img}" alt="${p.name}">
+                            <div class="product-info">
+                                <div class="product-title">${p.name}</div>
+                                <div class="product-desc">${p.desc}</div>
+                                <div class="product-bottom">
+                                    <div class="product-price">${p.price}</div>
+                                    <button class="btn-action">สั่งซื้อ</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </div>
+
+        <!-- ================= 6. หมวดสัตว์น้ำ ================= -->
+        <div class="screen" id="animals-screen">
+            <div class="sub-header">
+                <button class="btn-back" onclick="navigateTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="sub-header-title">สัตว์น้ำจืด</div>
+            </div>
+
+            <div class="product-grid">
+                <script>
+                    const animalsData = [                                       
+                        { name: 'ปลาหางนกยูง', price: '฿ 20', desc: 'สายพันธุ์สวยงาม หางพริ้วหลากสีสัน เพิ่มชีวิตชีวาให้ตู้', img: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=400&q=80' },
+                        { name: 'ปลานีออน', price: '฿ 25', desc: 'ปลาฝูงยอดนิยม แถบสีน้ำเงินแดงสะท้อนแสงเมื่อว่ายรวมฝูง', img: 'https://aquaticgo.com/wp-content/uploads/2025/10/Sa70868c87db246ef8bcc7491b25e4a1aj.jpg' },
+                        { name: 'ปลาม้าลาย', price: '฿ 15', desc: 'ปลาว่ายน้ำไว ลายทางสวยงาม ทนทานต่อสภาพน้ำได้ดี', img: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=400&q=80' },
+                        { name: 'ปลาเสือสุมาตรา', price: '฿ 20', desc: 'ปลาฝูงมีลายเสือ ว่ายน้ำคล่องแคล่วสดใส', img: 'https://images.unsplash.com/photo-1520301255226-bf5f144451c1?auto=format&fit=crop&w=400&q=80' },
+                        { name: 'กุ้งแคระ', price: '฿ 15', desc: 'กุ้งกินตะไคร่ขนาดเล็ก ช่วยทำความสะอาดใบไม้และเศษอาหาร', img: 'https://images.unsplash.com/photo-1548407260-da850faa41e3?auto=format&fit=crop&w=400&q=80' },
+                        { name: 'หอยเขา', price: '฿ 30', desc: 'หอยกินตะไคร่ผนังตู้ มีเขาสวยงาม ไม่ขยายพันธุ์เลอะเทอะในน้ำจืด', img: 'https://images.unsplash.com/photo-1548407260-da850faa41e3?auto=format&fit=crop&w=400&q=80' },
+                        { name: 'หอยกะทิ', price: '฿ 35', desc: 'หอยลายลวดลายสวยงาม ช่วยขัดตะไคร่น้ำจืดตามกระจกและหิน', img: 'https://images.unsplash.com/photo-1548407260-da850faa41e3?auto=format&fit=crop&w=400&q=80' },
+                        { name: 'ปูแวมไพร์', price: '฿ 120', desc: 'ปูขนาดเล็กตาสีเหลืองตัวสีม่วง เหมาะสำหรับตู้ครึ่งน้ำครึ่งบก', img: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=400&q=80' },
+                    ];
+
+                    document.write(animalsData.map(a => `
+                        <div class="product-card">
+                            <img class="product-img" src="${a.img}" alt="${a.name}">
+                            <div class="product-info">
+                                <div class="product-title">${a.name}</div>
+                                <div class="product-desc">${a.desc}</div>
+                                <div class="product-bottom">
+                                    <div class="product-price">${a.price}</div>
+                                    <button class="btn-action">สั่งซื้อ</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </div>
+
+        <!-- ================= 7. หมวดบริการต่างๆ ================= -->
+        <div class="screen" id="services-screen">
+            <div class="sub-header">
+                <button class="btn-back" onclick="navigateTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="sub-header-title">การเรียกใช้บริการ</div>
+            </div>
+
+            <div class="product-grid">
+                <!-- จัดตกแต่งตู้ใหม่ -->
+                <div class="product-card" style="height: 130px;">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1520301255226-bf5f144451c1?auto=format&fit=crop&w=400&q=80" alt="จัดตกแต่งตู้ใหม่">
+                    <div class="product-info">
+                        <div class="product-title">จัดตกแต่งตู้ใหม่</div>
+                        <div class="product-desc">ออกแบบและจัดสเคปตู้ไม้น้ำจืดถึงบ้าน โดยผู้เชี่ยวชาญด้านการจัดระบบนิเวศจำลอง</div>
+                        <div class="product-bottom">
+                            <div class="product-price">เริ่มต้น ฿ 1,500</div>
+                            <button class="btn-action red">จองบริการ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- เรียกใช้บริการดูแลตู้ (เช่น ตัดแต่งไม้น้ำ) -->
+                <div class="product-card" style="height: 130px;">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=400&q=80" alt="ตัดแต่งไม้น้ำ">
+                    <div class="product-info">
+                        <div class="product-title">บริการดูแลตู้ (ตัดแต่งไม้น้ำ)</div>
+                        <div class="product-desc">บริการตัดแต่งกิ่งไม้น้ำ จัดทรงพุ่ม และดูแลสารอาหารเพื่อให้ไม้น้ำเจริญเติบโตสวยงาม</div>
+                        <div class="product-bottom">
+                            <div class="product-price">เริ่มต้น ฿ 600</div>
+                            <button class="btn-action red">จองบริการ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ทำความสะอาดตู้ -->
+                <div class="product-card" style="height: 130px;">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80" alt="ทำความสะอาดตู้">
+                    <div class="product-info">
+                        <div class="product-title">ทำความสะอาดตู้</div>
+                        <div class="product-desc">ขัดตะไคร่น้ำ เปลี่ยนถ่ายน้ำ ดูดตะกอนดิน และล้างระบบกรองอย่างถูกวิธี</div>
+                        <div class="product-bottom">
+                            <div class="product-price">เริ่มต้น ฿ 500</div>
+                            <button class="btn-action red">จองบริการ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- เรียกใช้บริการปัญหาการเลี้ยงสัตว์น้ำ -->
+                <div class="product-card" style="height: 130px;">
+                    <img class="product-img" src="https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=400&q=80" alt="แก้ไขปัญหาการเลี้ยง">
+                    <div class="product-info">
+                        <div class="product-title">เรียกใช้บริการปัญหาการเลี้ยงสัตว์น้ำ</div>
+                        <div class="product-desc">ปรึกษาและตรวจเช็คปัญหาน้ำเสีย ปลาป่วย ค่าน้ำผิดปกติ พร้อมแก้ปัญหาตรงจุดถึงสถานที่</div>
+                        <div class="product-bottom">
+                            <div class="product-price">เริ่มต้น ฿ 400</div>
+                            <button class="btn-action red">ปรึกษาหมอ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Simple Navigation Script -->
+    <script>
+        function navigateTo(screenId) {
+            // Hide all screens
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show selected screen
+            const targetScreen = document.getElementById(screenId);
+            if(targetScreen) {
+                targetScreen.classList.add('active');
+                targetScreen.scrollTop = 0; // Scroll back to top
+            }
+        }
+    </script>
+</body>
+</html>
